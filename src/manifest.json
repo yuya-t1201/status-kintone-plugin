@@ -1,0 +1,44 @@
+{
+  "manifest_version": 1,
+  "version": 1,
+  "type": "APP",
+  "desktop": {
+    "js": [
+      "js/desktop.js"
+    ],
+    "css": [
+      "css/51-modern-default.css",
+      "css/desktop.css"
+    ]
+  },
+  "icon": "image/icon08.png",
+  "config": {
+    "html": "html/config.html",
+    "js": [
+      "js/config.js"
+    ],
+    "css": [
+      "css/51-modern-default.css",
+      "css/config.css"
+    ],
+    "required_params": [
+      "message"
+    ]
+  },
+  "name": {
+    "ja": "ステータス一括更新プラグイン",
+    "en": "Update-Status-in-Bulk"
+  },
+  "description": {
+    "ja": "作業者が設定されているステータスを一括更新するプラグインです。",
+    "en": "Update statuses assigned to workers in bulk."
+  },
+  "mobile": {
+    "js": [
+      "js/mobile.js"
+    ],
+    "css": [
+      "css/mobile.css"
+    ]
+  }
+}

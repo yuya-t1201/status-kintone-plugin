@@ -1,0 +1,15 @@
+{
+  "name": "Status-kintone-plugin",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "kintone-plugin-packer --ppk private.ppk --out dist/plugin.zip src",
+    "develop": "npm run build -- --watch",
+    "lint": "eslint src",
+    "start": "npm run develop"
+  },
+  "devDependencies": {
+    "@cybozu/eslint-config": "^22.0.2",
+    "@kintone/plugin-packer": "^8.0.4",
+    "eslint": "^8.56.0"
+  }
+}
