@@ -1,6 +1,6 @@
 {
   "manifest_version": 1,
-  "version": 1,
+  "version": 2,
   "type": "APP",
   "desktop": {
     "js": [
@@ -20,9 +20,6 @@
     "css": [
       "css/51-modern-default.css",
       "css/config.css"
-    ],
-    "required_params": [
-      "message"
     ]
   },
   "name": {
