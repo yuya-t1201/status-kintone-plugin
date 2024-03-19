@@ -9,7 +9,8 @@
       // ステータス名を取得してセレクトボックスに追加
       const statusResponse = await kintone.api(statusUrl, 'GET', { app });
       const statusSelect = document.getElementById('fromStatus');
-      for (const statusName of Object.keys(statusResponse.states)) {
+      const sortedStatusNames = Object.keys(statusResponse.states).sort((a, b) => b.localeCompare(a)); // ステータス名を降順にソート
+      for (const statusName of sortedStatusNames) {
         const option = document.createElement('option');
         option.value = statusName;
         option.textContent = statusName;
@@ -25,7 +26,6 @@
         option.textContent = action.name;
         actionSelect.appendChild(option);
       }
-
     } catch (error) {
       console.error('Failed to retrieve status and action names:', error);
     }
@@ -53,6 +53,9 @@
     try {
       const resp = await kintone.api(getUrl, 'GET', getBody);
       const ids = resp.records.map((record) => record.$id.value);
+      if (ids.length === 0) {
+        throw new Error('該当するレコードはありません');
+      }
       const putBody = {
         app: kintone.app.getId(),
         records: ids.map((id) => ({
@@ -72,7 +75,11 @@
       window.location.reload();
     } catch (error) {
       console.error('Failed to update status:', error);
-      alert('ステータスの更新中にエラーが発生しました');
+      if (error.message === '該当するレコードはありません') {
+        alert('該当するレコードはありません');
+      } else {
+        alert('ステータスの更新中にエラーが発生しました');
+      }
     }
   }
 
