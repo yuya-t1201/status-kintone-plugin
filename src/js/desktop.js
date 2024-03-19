@@ -28,6 +28,11 @@
       }
     } catch (error) {
       console.error('Failed to retrieve status and action names:', error);
+      if (error instanceof TypeError) {
+        alert('ネットワークに問題が発生しました。もう一度試してください。');
+      } else {
+        alert('ステータスとアクションの名前の取得中にエラーが発生しました。');
+      }
     }
   }
 
@@ -77,6 +82,12 @@
       console.error('Failed to update status:', error);
       if (error.message === '該当するレコードはありません') {
         alert('該当するレコードはありません');
+      } else if (error.message === '処理中断しました') {
+        // キャンセルの場合は何もしない
+      } else if (error.message === '作業者を指定してください。') {
+        alert('プロセスの引き戻しはできません');
+      } else if (error.message === 'ステータスの変更に失敗しました。ほかのユーザーがステータス、またはステータスの設定を変更した可能性があります。') {
+        alert('ステータスに対するアクション名が間違っています。');
       } else {
         alert('ステータスの更新中にエラーが発生しました');
       }
