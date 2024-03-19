@@ -4,7 +4,6 @@
     const statusUrl = kintone.api.url('/k/v1/app/status.json', true);
     const actionUrl = kintone.api.url('/k/v1/app/status.json', true); // 修正
     const app = kintone.app.getId();
-    const Kuc = Kucs['1.4.0'];
 
     try {
       // ステータス名を取得してセレクトボックスに追加
@@ -96,24 +95,40 @@
   }
 
   kintone.events.on('app.record.index.show', () => {
+    // 他の初期化処理（populateSelectBoxesなど）を実行
     populateSelectBoxes();
-
+  
+    // ヘッダーメニュー領域の要素を取得
     const headerEl = kintone.app.getHeaderMenuSpaceElement();
     if (headerEl === null) {
       throw new Error('The header element is unavailable on this page.');
     }
-
+  
+    // ボタンとセレクトボックスを含むHTML要素を生成
     const selectDiv = document.createElement('div');
     selectDiv.innerHTML = `
       <label for="fromStatus">変更前のステータス:</label>
       <select id="fromStatus"></select>
       <label for="doAction">実行アクション名（ボタン名）:</label>
       <select id="doAction"></select>
-      <button id="bulkUpdateButton">ステータスを一括更新</button>
     `;
+  
+    // ヘッダーメニュー領域に生成したHTML要素を追加
     headerEl.appendChild(selectDiv);
+  
+    // ボタン要素を取得し、クリックイベントリスナーを追加
+    const bulkUpdateButton = new Kuc.Button({
+      text: 'ステータスを一括更新',  // ボタンのテキスト
+      type: 'submit',  // ボタンのタイプ
+      content: '',  // ボタンの内容は空にします
+      className: 'options-class',  // ボタンのクラス名
+      id: 'bulkUpdateButton',  // ボタンのID
+      visible: true,  // ボタンの表示状態
+      disabled: false  // ボタンの無効状態
+    });
+    selectDiv.appendChild(bulkUpdateButton);  // ボタンをselectDiv内に追加
 
-    const bulkUpdateButton = document.getElementById('bulkUpdateButton');
+    // ボタンクリック時のイベントリスナーを追加
     bulkUpdateButton.addEventListener('click', bulkUpdateStatus);
   });
 })(kintone.$PLUGIN_ID);

@@ -4,6 +4,7 @@
   "type": "APP",
   "desktop": {
     "js": [
+      "kuc/kuc.min.js",
       "js/desktop.js"
     ],
     "css": [
