@@ -4,6 +4,7 @@
     const statusUrl = kintone.api.url('/k/v1/app/status.json', true);
     const actionUrl = kintone.api.url('/k/v1/app/status.json', true); // 修正
     const app = kintone.app.getId();
+    const Kuc = Kucs['1.4.0'];
 
     try {
       // ステータス名を取得してセレクトボックスに追加
