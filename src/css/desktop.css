@@ -8,3 +8,8 @@
   margin: 0.8rem;
   margin-top: 0;
 }
+/* カスタム CSS */
+.options-class {
+  --kuc-button-height: 41px; /* ボタンの高さを調整 */
+  margin-left: 3rem;
+}
