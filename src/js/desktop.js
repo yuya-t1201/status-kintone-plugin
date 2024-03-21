@@ -4,28 +4,47 @@
     const statusUrl = kintone.api.url('/k/v1/app/status.json', true);
     const actionUrl = kintone.api.url('/k/v1/app/status.json', true); // 修正
     const app = kintone.app.getId();
+    const headerEl = kintone.app.getHeaderMenuSpaceElement(); // ヘッダーメニュー領域の要素を取得
 
     try {
       // ステータス名を取得してセレクトボックスに追加
       const statusResponse = await kintone.api(statusUrl, 'GET', { app });
-      const statusSelect = document.getElementById('fromStatus');
-      const sortedStatusNames = Object.keys(statusResponse.states).sort((a, b) => b.localeCompare(a)); // ステータス名を降順にソート
-      for (const statusName of sortedStatusNames) {
-        const option = document.createElement('option');
-        option.value = statusName;
-        option.textContent = statusName;
-        statusSelect.appendChild(option);
-      }
+      const sortedStatusNames = Object.keys(statusResponse.states).sort(
+        (a, b) => b.localeCompare(a),
+      ); // ステータス名を降順にソート
+      const dropdownStatuses = sortedStatusNames.map((status) => ({
+        label: status,
+        value: status,
+      }));
+
+      const dropdownStatus = new Kuc.Dropdown({
+        requiredIcon: true,
+        items: dropdownStatuses,
+        id: 'statusDropdown', // 初期値（任意）
+        visible: true, // 表示状態（任意）
+        disabled: false, // 無効状態（任意）
+      });
 
       // アクションボタン名を取得してセレクトボックスに追加
       const actionResponse = await kintone.api(actionUrl, 'GET', { app });
-      const actionSelect = document.getElementById('doAction');
-      for (const action of actionResponse.actions) {
-        const option = document.createElement('option');
-        option.value = action.name;
-        option.textContent = action.name;
-        actionSelect.appendChild(option);
-      }
+      const dropdownActions = actionResponse.actions.map((action) => ({
+        label: action.name,
+        value: action.name,
+      }));
+
+      const dropdownAction = new Kuc.Dropdown({
+        requiredIcon: true,
+        items: dropdownActions,
+        id: 'actionDropdown', // 初期値（任意）
+        visible: true, // 表示状態（任意）
+        disabled: false, // 無効状態（任意）
+      });
+
+      // ヘッダーメニュー領域にドロップダウンとボタンを追加
+      headerEl.appendChild(dropdownStatus);
+      headerEl.appendChild(dropdownAction);
+
+      return headerEl; // ここでheaderElを返す
     } catch (error) {
       console.error('Failed to retrieve status and action names:', error);
       if (error instanceof TypeError) {
@@ -37,9 +56,11 @@
   }
 
   // ステータスを一括更新する関数
-  async function bulkUpdateStatus() {
-    const fromStatus = document.getElementById('fromStatus').value;
-    const doAction = document.getElementById('doAction').value;
+  async function bulkUpdateStatus(headerEl) {
+    const fromStatus = headerEl.querySelector('#statusDropdown').value;
+    const doAction = headerEl.querySelector('#actionDropdown').value;
+    console.log(fromStatus);
+    console.log(doAction);
 
     const getUrl = kintone.api.url('/k/v1/records', true);
     const putUrl = kintone.api.url('/k/v1/records/status', true);
@@ -86,7 +107,10 @@
         // キャンセルの場合は何もしない
       } else if (error.message === '作業者を指定してください。') {
         alert('プロセスの引き戻しはできません');
-      } else if (error.message === 'ステータスの変更に失敗しました。ほかのユーザーがステータス、またはステータスの設定を変更した可能性があります。') {
+      } else if (
+        error.message ===
+        'ステータスの変更に失敗しました。ほかのユーザーがステータス、またはステータスの設定を変更した可能性があります。'
+      ) {
         alert('ステータスに対するアクション名が間違っています。');
       } else {
         alert('ステータスの更新中にエラーが発生しました');
@@ -94,41 +118,32 @@
     }
   }
 
-  kintone.events.on('app.record.index.show', () => {
+  kintone.events.on('app.record.index.show', async () => {
+    // asyncを追加
     // 他の初期化処理（populateSelectBoxesなど）を実行
-    populateSelectBoxes();
-  
-    // ヘッダーメニュー領域の要素を取得
-    const headerEl = kintone.app.getHeaderMenuSpaceElement();
+    const headerEl = await populateSelectBoxes(); // populateSelectBoxesがPromiseを返すのでawaitを使用して結果を待つ
+
     if (headerEl === null) {
       throw new Error('The header element is unavailable on this page.');
     }
-  
-    // ボタンとセレクトボックスを含むHTML要素を生成
-    const selectDiv = document.createElement('div');
-    selectDiv.innerHTML = `
-      <label for="fromStatus">変更前のステータス:</label>
-      <select id="fromStatus"></select>
-      <label for="doAction">実行アクション名（ボタン名）:</label>
-      <select id="doAction"></select>
-    `;
-  
-    // ヘッダーメニュー領域に生成したHTML要素を追加
-    headerEl.appendChild(selectDiv);
-  
+
     // ボタン要素を取得し、クリックイベントリスナーを追加
     const bulkUpdateButton = new Kuc.Button({
-      text: 'ステータスを一括更新',  // ボタンのテキスト
-      type: 'submit',  // ボタンのタイプ
-      content: '',  // ボタンの内容は空にします
-      className: 'options-class',  // ボタンのクラス名
-      id: 'bulkUpdateButton',  // ボタンのID
-      visible: true,  // ボタンの表示状態
-      disabled: false  // ボタンの無効状態
+      text: 'ステータスを一括更新', // ボタンのテキスト
+      type: 'submit', // ボタンのタイプ
+      content: '', // ボタンの内容は空にします
+      className: 'options-class', // ボタンのクラス名
+      id: 'bulkUpdateButton', // ボタンのID
+      visible: true,
+      disabled: false, // ボタンの無効状態
     });
-    selectDiv.appendChild(bulkUpdateButton);  // ボタンをselectDiv内に追加
+
+    // ボタンをドロップダウンの右側に追加
+    headerEl.appendChild(bulkUpdateButton);
 
     // ボタンクリック時のイベントリスナーを追加
-    bulkUpdateButton.addEventListener('click', bulkUpdateStatus);
+    bulkUpdateButton.addEventListener('click', () =>
+      bulkUpdateStatus(headerEl),
+    ); // headerElを引数として渡す
   });
 })(kintone.$PLUGIN_ID);
