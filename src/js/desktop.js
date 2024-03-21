@@ -18,7 +18,7 @@
       }));
 
       const dropdownStatus = new Kuc.Dropdown({
-        label: "一括変更するステータス",
+        label: '一括変更するステータス',
         requiredIcon: true,
         items: dropdownStatuses,
         className: 'status-class',
@@ -35,7 +35,7 @@
       }));
 
       const dropdownAction = new Kuc.Dropdown({
-        label: "対応するアクション名",
+        label: '対応するアクション名',
         requiredIcon: true,
         items: dropdownActions,
         className: 'action-class',
@@ -64,13 +64,13 @@
     const fromStatus = headerEl.querySelector('#statusDropdown').value;
     const doAction = headerEl.querySelector('#actionDropdown').value;
 
-    if (!fromStatus) {
-      alert('ステータスを選択してください');
-      return; // 処理を中断してユーザーにアクションの選択を促す
-    }
-
-    if (!doAction) {
-      alert('アクション名を選択してください');
+    if (!fromStatus || !doAction) {
+      if (!fromStatus) {
+        alert('ステータスを選択してください');
+      }
+      if (!doAction) {
+        alert('アクション名を選択してください');
+      }
       return; // 処理を中断してユーザーにアクションの選択を促す
     }
 
