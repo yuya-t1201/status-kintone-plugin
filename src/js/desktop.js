@@ -63,8 +63,16 @@
   async function bulkUpdateStatus(headerEl) {
     const fromStatus = headerEl.querySelector('#statusDropdown').value;
     const doAction = headerEl.querySelector('#actionDropdown').value;
-    console.log(fromStatus);
-    console.log(doAction);
+
+    if (!fromStatus) {
+      alert('ステータスを選択してください');
+      return; // 処理を中断してユーザーにアクションの選択を促す
+    }
+
+    if (!doAction) {
+      alert('アクション名を選択してください');
+      return; // 処理を中断してユーザーにアクションの選択を促す
+    }
 
     const getUrl = kintone.api.url('/k/v1/records', true);
     const putUrl = kintone.api.url('/k/v1/records/status', true);
