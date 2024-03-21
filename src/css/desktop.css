@@ -12,4 +12,13 @@
 .options-class {
   --kuc-button-height: 41px; /* ボタンの高さを調整 */
   margin-left: 3rem;
+  margin-top: 2rem;
+}
+
+.status-class {
+  margin-left: 1rem;
+}
+
+.action-class {
+  margin-left: 1rem;
 }

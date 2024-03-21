@@ -18,8 +18,10 @@
       }));
 
       const dropdownStatus = new Kuc.Dropdown({
+        label: "一括変更するステータス",
         requiredIcon: true,
         items: dropdownStatuses,
+        className: 'status-class',
         id: 'statusDropdown', // 初期値（任意）
         visible: true, // 表示状態（任意）
         disabled: false, // 無効状態（任意）
@@ -33,8 +35,10 @@
       }));
 
       const dropdownAction = new Kuc.Dropdown({
+        label: "対応するアクション名",
         requiredIcon: true,
         items: dropdownActions,
+        className: 'action-class',
         id: 'actionDropdown', // 初期値（任意）
         visible: true, // 表示状態（任意）
         disabled: false, // 無効状態（任意）
